@@ -2,6 +2,8 @@ import { ImportKind } from "@prisma/client";
 import { createProject, createReportPeriod, uploadSourceFile } from "@/app/actions";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 const kindOptions = [
   {
     value: ImportKind.UTILIZATION,
