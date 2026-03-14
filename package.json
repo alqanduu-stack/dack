@@ -1,0 +1,28 @@
+{
+  "name": "dack-reporting-platform",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.6.5",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.5.0",
+    "next": "^15.2.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "prisma": "^6.5.0",
+    "typescript": "^5.8.2"
+  }
+}

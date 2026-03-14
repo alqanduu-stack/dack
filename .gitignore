@@ -1,0 +1,43 @@
+node_modules
+.next
+dist
+build
+coverage
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+.DS_Store
+*.log
+
+tmp
+uploads
+generated
+
+# Client sample files kept local by default
+raw data.xlsx
+Q4 2025.xlsx
+raw data participation.xlsx
+Utilization Payment Data.xlsx
+EEO Data 2.10.26.xlsx
+MWBE_by_Contract (6).pdf
+DACK_Cornell Phase I Status Report Q4 2025.pdf
+DACK_NYHS ANNEX Q3 2025 REPORT_12.4.2025_email.pdf
+DACK_NYHS ANNEX Q3 2025 REPORT_12.4.2025_email (1).pdf
+Q4_1.png
+Q4_2.png
+Q4_3.png
+Q4_4.png
+Q4_5.png
+WBE Sankey - New.png
+MBE Sankey - New.png
+SDVOB Sankey - New.png
+Overall Sankey@2x.png
+Gender Breakdown for Q2@2x.png
+Ethnicity Bar Graph@2x.png
+Ethnicity Breakdown by Month@2x.png
+Ethnicity Breakdown by Month@2x (1).png
+Ethnicity by Contractor Grid Chart@2x.png

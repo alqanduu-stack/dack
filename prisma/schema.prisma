@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ImportKind {
+  UTILIZATION
+  WORKFORCE
+  REPORT_TEMPLATE
+  SUPPORTING_DOCUMENT
+}
+
+enum ImportStatus {
+  PENDING
+  PARSED
+  NEEDS_REVIEW
+  APPROVED
+  FAILED
+}
+
+enum ReportStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  EXPORTED
+}
+
+enum ContractorRole {
+  PRIME
+  SUBCONTRACTOR
+  SUPPLIER
+  UNKNOWN
+}
+
+enum DiversityCategory {
+  MBE
+  WBE
+  SDVOB
+  NON_MWBE
+  UNKNOWN
+}
+
+model Project {
+  id          String      @id @default(cuid())
+  name        String
+  clientName  String?
+  code        String?
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  periods     ReportPeriod[]
+}
+
+model ReportPeriod {
+  id             String              @id @default(cuid())
+  projectId      String
+  label          String
+  year           Int?
+  quarter        String?
+  periodStart    DateTime?
+  periodEnd      DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  project        Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sourceFiles    SourceFile[]
+  reports        ReportRun[]
+  utilization    UtilizationRecord[]
+  workforceRows  WorkforceRecord[]
+}
+
+model SourceFile {
+  id             String       @id @default(cuid())
+  reportPeriodId String
+  name           String
+  originalName   String?
+  storagePath    String
+  mimeType       String?
+  fileSize       Int?
+  kind           ImportKind
+  status         ImportStatus @default(PENDING)
+  notes          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  reportPeriod   ReportPeriod @relation(fields: [reportPeriodId], references: [id], onDelete: Cascade)
+}
+
+model Contractor {
+  id                String            @id @default(cuid())
+  normalizedName    String            @unique
+  displayName       String
+  certification     DiversityCategory @default(UNKNOWN)
+  role              ContractorRole    @default(UNKNOWN)
+  towardGoalPercent Decimal?          @db.Decimal(5, 2)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  utilization       UtilizationRecord[]
+  workforceRows     WorkforceRecord[]
+}
+
+model UtilizationRecord {
+  id                String            @id @default(cuid())
+  reportPeriodId    String
+  contractorId      String
+  sourceFileId      String?
+  certification     DiversityCategory @default(UNKNOWN)
+  role              ContractorRole    @default(UNKNOWN)
+  contractValue     Decimal           @db.Decimal(14, 2)
+  towardGoalValue   Decimal           @db.Decimal(14, 2)
+  paidToDate        Decimal           @db.Decimal(14, 2)
+  pendingPayment    Decimal?          @db.Decimal(14, 2)
+  utilizationPlanReceived Boolean     @default(false)
+  sourceRowRef      String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  reportPeriod      ReportPeriod      @relation(fields: [reportPeriodId], references: [id], onDelete: Cascade)
+  contractor        Contractor        @relation(fields: [contractorId], references: [id], onDelete: Cascade)
+}
+
+model WorkforceRecord {
+  id                String       @id @default(cuid())
+  reportPeriodId    String
+  contractorId      String?
+  sourceFileId      String?
+  companyName       String
+  quarter           String?
+  eeoJobTitle       String?
+  raceEthnicity     String?
+  gender            String?
+  employeeCount     Int?
+  hoursWorked       Decimal?     @db.Decimal(14, 2)
+  sourceRowRef      String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  reportPeriod      ReportPeriod @relation(fields: [reportPeriodId], references: [id], onDelete: Cascade)
+  contractor        Contractor?  @relation(fields: [contractorId], references: [id], onDelete: SetNull)
+}
+
+model ReportRun {
+  id             String       @id @default(cuid())
+  reportPeriodId String
+  status         ReportStatus @default(DRAFT)
+  templateKey    String
+  outputPath     String?
+  approvedBy     String?
+  approvedAt     DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  reportPeriod   ReportPeriod @relation(fields: [reportPeriodId], references: [id], onDelete: Cascade)
+}
