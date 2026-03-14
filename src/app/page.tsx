@@ -104,14 +104,22 @@ export default async function HomePage() {
 
   return (
     <main className="shell">
+      <nav className="topBar">
+        <div className="topBarBrand">
+          <div className="topBarLogo">D</div>
+          <span>DACK</span>
+          <small>Reporting Platform</small>
+        </div>
+        <div className="topBarStatus">Connected</div>
+      </nav>
+
       <section className="hero">
         <div>
-          <p className="eyebrow">DACK internal platform</p>
-          <h1>Ingest MWBE and EEO reporting packages without the spreadsheet sprawl.</h1>
+          <p className="eyebrow">Phase 1 &mdash; Ingestion</p>
+          <h1>MWBE &amp; EEO reporting, without the spreadsheet&nbsp;sprawl.</h1>
           <p className="lede">
-            Phase 1 now starts with real records: create a project, open a reporting period,
-            and attach the utilization, workforce, and reference files needed for review and
-            downstream parsing.
+            Create a project, open a reporting period, and attach utilization, workforce, and
+            reference files for review and downstream parsing.
           </p>
         </div>
 
@@ -122,18 +130,18 @@ export default async function HomePage() {
           </article>
           <article>
             <span>{totalPeriods}</span>
-            <p>Reporting periods</p>
+            <p>Periods</p>
           </article>
           <article>
             <span>{totalSourceFiles}</span>
-            <p>Source files</p>
+            <p>Files</p>
           </article>
         </div>
       </section>
 
       <section className="workspace">
         {databaseError ? (
-          <article className="card formCard">
+          <article className="card formCard statusCard">
             <div className="sectionHeader">
               <div>
                 <p className="sectionEyebrow">Setup issue</p>
@@ -325,7 +333,7 @@ export default async function HomePage() {
                       {project.code ? ` • ${project.code}` : ""}
                     </p>
                   </div>
-                  <span>{project.periods.length} periods</span>
+                  <span className="pill">{project.periods.length} periods</span>
                 </div>
 
                 {project.description ? <p className="projectDescription">{project.description}</p> : null}
@@ -346,7 +354,7 @@ export default async function HomePage() {
                               {period.year ? ` • ${period.year}` : ""}
                             </p>
                           </div>
-                          <span>{period.sourceFiles.length} files</span>
+                          <span className="pill">{period.sourceFiles.length} files</span>
                         </div>
 
                         <p className="periodMeta">
