@@ -52,25 +52,33 @@ function formatBytes(value: number | null | undefined) {
 }
 
 export default async function HomePage() {
-  const projects = await prisma.project.findMany({
-    orderBy: {
-      updatedAt: "desc"
-    },
-    include: {
-      periods: {
-        orderBy: {
-          createdAt: "desc"
-        },
-        include: {
-          sourceFiles: {
-            orderBy: {
-              createdAt: "desc"
+  let projects: Awaited<ReturnType<typeof prisma.project.findMany>> = [];
+  let databaseError: string | null = null;
+
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: {
+        updatedAt: "desc"
+      },
+      include: {
+        periods: {
+          orderBy: {
+            createdAt: "desc"
+          },
+          include: {
+            sourceFiles: {
+              orderBy: {
+                createdAt: "desc"
+              }
             }
           }
         }
       }
-    }
-  });
+    });
+  } catch (error) {
+    databaseError =
+      error instanceof Error ? error.message : "Unknown database error during page load.";
+  }
 
   const totalPeriods = projects.reduce((sum, project) => sum + project.periods.length, 0);
   const totalSourceFiles = projects.reduce(
@@ -110,6 +118,23 @@ export default async function HomePage() {
       </section>
 
       <section className="workspace">
+        {databaseError ? (
+          <article className="card formCard">
+            <div className="sectionHeader">
+              <div>
+                <p className="sectionEyebrow">Setup issue</p>
+                <h2>Database connection needs attention</h2>
+              </div>
+              <p>The app is running, but it could not load project data from Postgres.</p>
+            </div>
+
+            <p className="projectDescription">
+              Check the Easypanel app environment and confirm the internal database URL is correct,
+              then confirm the migration has been applied. Runtime message: {databaseError}
+            </p>
+          </article>
+        ) : null}
+
         <article className="card formCard">
           <div className="sectionHeader">
             <div>
