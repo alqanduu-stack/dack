@@ -4,6 +4,20 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+type ProjectWithPeriods = Awaited<
+  ReturnType<
+    typeof prisma.project.findMany<{
+      include: {
+        periods: {
+          include: {
+            sourceFiles: true;
+          };
+        };
+      };
+    }>
+  >
+>;
+
 const kindOptions = [
   {
     value: ImportKind.UTILIZATION,
@@ -52,7 +66,7 @@ function formatBytes(value: number | null | undefined) {
 }
 
 export default async function HomePage() {
-  let projects: Awaited<ReturnType<typeof prisma.project.findMany>> = [];
+  let projects: ProjectWithPeriods = [];
   let databaseError: string | null = null;
 
   try {
